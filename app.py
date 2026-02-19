@@ -2,10 +2,6 @@ import streamlit as st
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-
-# Обучающие данные
-data = {
-    "text": [
         # -------------------------------
 # ОБУЧАЮЩИЕ ДАННЫЕ
 # 1 = мошенничество
@@ -109,6 +105,7 @@ bad_messages = [
     "ВНИМАНИЕ! Ваш профиль взломан. Смените пароль немедленно"
 ]
 
+# объединяем данные
 texts = good_messages + bad_messages
 labels = [0]*len(good_messages) + [1]*len(bad_messages)
 
@@ -117,20 +114,17 @@ df = pd.DataFrame({
     "label": labels
 })
 
-
-
-df = pd.DataFrame(data)
-
+# Векторизация
 vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(df["text"])
 y = df["label"]
 
+# Обучение модели
 model = LogisticRegression()
 model.fit(X, y)
 
-# Интерфейс
+# Интерфейс Streamlit
 st.title("🛡️ AI-система выявления фишинга")
-
 st.write("Введите текст сообщения для анализа")
 
 user_input = st.text_area("Текст сообщения")
