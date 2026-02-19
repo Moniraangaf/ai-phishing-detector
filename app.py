@@ -1,11 +1,7 @@
-!pip install scikit-learn pandas streamlit
-
 import streamlit as st
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.feature_extraction.text import TfidfVectorizer
-
         # -------------------------------
 # ОБУЧАЮЩИЕ ДАННЫЕ
 # 1 = мошенничество
