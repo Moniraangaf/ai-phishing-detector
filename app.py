@@ -89,7 +89,7 @@ st.markdown(
     .risk-bar-fill {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+}
     }
     .risk-caption {
         font-size: 0.82rem;
@@ -399,10 +399,19 @@ if check:
         st.warning("Сначала вставь текст сообщения для проверки.")
 
 if score is not None:
+    if score < 30:
+        bar_color = "#22c55e"      # зелёный
+    elif score < 70:
+        bar_color = "#eab308"      # жёлтый
+    else:
+        bar_color = "#ef4444"      # красный
+
     st.markdown(
         f"""
         <div class="risk-bar-bg">
-            <div class="risk-bar-fill" style="width:{min(max(score,0),100)}%;"></div>
+            <div class="risk-bar-fill"
+                 style="width:{min(max(score,0),100)}%; background:{bar_color};">
+            </div>
         </div>
         <div class="risk-caption">
             0% — безопасно · 100% — почти наверняка фишинг
