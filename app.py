@@ -14,30 +14,94 @@ st.markdown(
     """
     <style>
     .stApp {
-        background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+        background: radial-gradient(circle at top, #111827 0, #020617 55%);
         color: #e5e7eb;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                     "Segoe UI", sans-serif;
     }
-    .main-block {
-        background: #020617cc;
-        padding: 2.5rem 2rem;
-        border-radius: 14px;
-        border: 1px solid #334155;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    .main-wrap {
+        max-width: 860px;
+        margin: 2.5rem auto 2rem auto;
+    }
+    .hero-card {
+        background: linear-gradient(135deg, #020617ee, #020617f0);
+        padding: 2.4rem 2.3rem;
+        border-radius: 18px;
+        border: 1px solid #293548;
+        box-shadow: 0 22px 45px rgba(0,0,0,0.55);
+    }
+    .hero-title {
+        font-size: 2.1rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        margin-bottom: 0.2rem;
+    }
+    .hero-sub {
+        color: #9ca3af;
+        font-size: 0.98rem;
+        margin-top: 0.3rem;
+    }
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.18rem 0.6rem;
+        border-radius: 999px;
+        background: #0f172acc;
+        border: 1px solid #1e293b;
+        color: #9ca3af;
+        font-size: 0.78rem;
+        margin-bottom: 0.6rem;
+    }
+    .hero-badge-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow: 0 0 0 4px rgba(34,197,94,0.25);
+    }
+    .section-label {
+        font-size: 0.86rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.25rem;
     }
     textarea {
-        font-size: 1rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.98rem !important;
+        line-height: 1.5 !important;
+    }
+    .risk-bar-bg {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background: #020617;
+        border: 1px solid #1e293b;
+        overflow: hidden;
+        margin-top: 0.4rem;
+    }
+    .risk-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+    }
+    .risk-caption {
+        font-size: 0.82rem;
+        color: #9ca3af;
+        margin-top: 0.25rem;
+    }
+    .footer-note {
+        font-size: 0.78rem;
+        color: #6b7280;
+        margin-top: 0.6rem;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# -------------------- ОБУЧАЮЩИЕ ДАННЫЕ --------------------
-# 1 = мошенничество
-# 0 = нормальное сообщение
-
+# -------------------- ДАННЫЕ --------------------
 good_messages = [
     "Завтра сдача отчета по проекту в 14:00",
     "Напоминаю о встрече с клиентом в 10 утра",
@@ -141,83 +205,120 @@ bad_messages = [
     "Для одобрения акции или займа напишите смс по номеру +7..."
 ]
 
-# объединяем данные
 texts = good_messages + bad_messages
 labels = [0] * len(good_messages) + [1] * len(bad_messages)
-
 df = pd.DataFrame({"text": texts, "label": labels})
 
 # -------------------- МОДЕЛЬ --------------------
 vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(df["text"])
 y = df["label"]
-
 model = LogisticRegression()
 model.fit(X, y)
 
 # -------------------- ИНТЕРФЕЙС --------------------
+st.markdown('<div class="main-wrap">', unsafe_allow_html=True)
+
 st.markdown(
     """
-    <div class="main-block">
-      <h1 style="margin-bottom: 0.5rem;">🛡️ AI‑система выявления фишинга</h1>
-      <p style="color:#9ca3af; margin-bottom:1.5rem;">
-        Вставь текст письма, сообщения или СМС — модель оценит риск мошенничества.
-      </p>
+    <div class="hero-card">
+        <div class="hero-badge">
+            <div class="hero-badge-dot"></div>
+            Модель обучена на реальных примерах сообщений
+        </div>
+        <div style="display:flex;align-items:center;gap:0.7rem;">
+            <span style="font-size:2.2rem;">🛡️</span>
+            <div>
+                <div class="hero-title">AI‑система выявления фишинга</div>
+                <p class="hero-sub">
+                    Вставь текст письма, сообщения или СМС — модель оценит риск мошенничества
+                    и подскажет, на что обратить внимание.
+                </p>
+            </div>
+        </div>
+    </div>
     """,
     unsafe_allow_html=True
 )
+
+st.markdown("<div style='height:1.4rem;'></div>", unsafe_allow_html=True)
+
+st.markdown('<div class="section-label">Текст сообщения</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns([3, 1])
 
 with col1:
     user_input = st.text_area(
-        "Текст сообщения",
-        height=140,
+        "",
+        height=150,
         placeholder='Например: "Переведи деньги, срочно, карта заблокирована"',
     )
 
 with col2:
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height:0.2rem;'></div>", unsafe_allow_html=True)
     check = st.button("Проверить", use_container_width=True)
+
+score = None
+pred = None
 
 if check:
     if user_input.strip():
         vec = vectorizer.transform([user_input])
         prob = model.predict_proba(vec)[0][1]
-        pred = model.predict(vec)[0]
+        pred = int(model.predict(vec)[0])
         score = round(prob * 100, 1)
 
         st.markdown("---")
         st.subheader("Результат анализа")
 
         if pred == 1:
-            st.error(
-                f"⚠️ Подозрительное сообщение\n\nВероятность фишинга: **{score}%**"
-            )
+            st.error(f"⚠️ Подозрительное сообщение\n\nВероятность фишинга: **{score}%**")
             st.write(
-                "- присутствует давящий или срочный тон\n"
-                "- есть просьба о переводе денег или вводе кодов/паролей\n"
-                "- сообщение может имитировать банк, госуслуги или родственников"
+                "- замечен срочный или давящий тон\n"
+                "- есть просьба перевести деньги или ввести коды/пароли\n"
+                "- текст похож на типичные схемы с банком, госуслугами или родственниками"
             )
         else:
-            st.success(
-                f"✅ Вероятно безопасное сообщение\n\nРиск фишинга: **{score}%**"
-            )
+            st.success(f"✅ Вероятно безопасное сообщение\n\nРиск фишинга: **{score}%**")
             st.write(
-                "В тексте нет типичных признаков выманивания денег или данных. "
-                "Но всё равно не переходи по странным ссылкам и не сообщай коды из SMS."
+                "Модель не увидела характерных признаков выманивания денег или данных. "
+                "Но всё равно не переходи по подозрительным ссылкам и не сообщай коды из SMS."
             )
     else:
-        st.warning("Введите текст для проверки.")
+        st.warning("Сначала вставь текст сообщения для проверки.")
 
-st.markdown("</div>", unsafe_allow_html=True)
+# Индикатор риска под результатом
+if score is not None:
+    st.markdown(
+        f"""
+        <div class="risk-bar-bg">
+            <div class="risk-bar-fill" style="width:{min(max(score,0),100)}%;"></div>
+        </div>
+        <div class="risk-caption">
+            0% — безопасно · 100% — почти наверняка фишинг
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-# -------------------- БЛОК «КАК ПОЛЬЗОВАТЬСЯ» --------------------
+st.markdown(
+    """
+    <p class="footer-note">
+        Сервис не заменяет здравый смысл и официальные каналы банка или госорганов.
+        При сомнениях звони по номеру на официальном сайте, а не из сообщения.
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
 with st.expander("Как интерпретировать результат?"):
     st.markdown(
         """
-        - до 30% — низкий риск, но всё равно будь осторожен  
-        - 30–70% — сомнительное сообщение, лучше перепроверь отправителя  
-        - выше 70% — очень похоже на фишинг, не отвечай и не переводь деньги  
+        - **до 30%** — низкий риск, но всё равно перепроверь адрес отправителя и ссылки  
+        - **30–70%** — сомнительное сообщение, лучше позвони в банк или родным и уточни  
+        - **выше 70%** — очень похоже на фишинг, не отвечай и не переводь деньги  
+        - вспоминай правило: *коды из SMS и PIN не спрашивают по сообщениям и звонкам*  
         """
     )
+
+st.markdown("</div>", unsafe_allow_html=True)
