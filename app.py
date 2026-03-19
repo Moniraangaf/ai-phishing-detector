@@ -413,9 +413,11 @@ if score is not None:
                  style="width:{min(max(score,0),100)}%; background:{bar_color};">
             </div>
         </div>
-        <div class="risk-caption">
-            0% — безопасно · 100% — почти наверняка фишинг
-        </div>
+       <div class="risk-caption">
+    0% — безопасно<br>
+    100% — почти наверняка фишинг
+</div>
+
         """,
         unsafe_allow_html=True
     )
