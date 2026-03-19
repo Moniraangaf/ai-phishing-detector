@@ -60,13 +60,18 @@ st.markdown(
         background: #22c55e;
         box-shadow: 0 0 0 4px rgba(34,197,94,0.25);
     }
-    .section-label {
-        font-size: 0.86rem;
-        font-weight: 500;
-        letter-spacing: 0.04em;
+    .section-label-main {
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
+        color: #e5e7eb;
+        margin-bottom: 0.15rem;
+    }
+    .section-label-sub {
+        font-size: 0.82rem;
         color: #9ca3af;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.45rem;
     }
     textarea {
         font-size: 0.98rem !important;
@@ -95,6 +100,21 @@ st.markdown(
         font-size: 0.78rem;
         color: #6b7280;
         margin-top: 0.6rem;
+    }
+    .primary-btn > button {
+        background: #2563eb !important;
+        border-radius: 999px !important;
+        border: 1px solid #1d4ed8 !important;
+        color: #f9fafb !important;
+        font-weight: 600 !important;
+    }
+    .primary-btn > button:hover {
+        background: #1d4ed8 !important;
+    }
+    .input-caption {
+        font-size: 0.78rem;
+        color: #6b7280;
+        margin-top: 0.2rem;
     }
     </style>
     """,
@@ -243,20 +263,35 @@ st.markdown(
 
 st.markdown("<div style='height:1.4rem;'></div>", unsafe_allow_html=True)
 
-st.markdown('<div class="section-label">Текст сообщения</div>', unsafe_allow_html=True)
+st.markdown(
+    """
+    <div class="section-label-main">Проверь текст на фишинг</div>
+    <div class="section-label-sub">
+        Вставь сюда сообщение целиком: СМС, письмо, текст из мессенджера.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 col1, col2 = st.columns([3, 1])
 
 with col1:
     user_input = st.text_area(
-        "",
+        label="",
         height=150,
         placeholder='Например: "Переведи деньги, срочно, карта заблокирована"',
+    )
+    st.markdown(
+        '<div class="input-caption">Мы не сохраняем введённые сообщения.</div>',
+        unsafe_allow_html=True
     )
 
 with col2:
     st.markdown("<div style='height:0.2rem;'></div>", unsafe_allow_html=True)
-    check = st.button("Проверить", use_container_width=True)
+    with st.container():
+        st.markdown('<div class="primary-btn">', unsafe_allow_html=True)
+        check = st.button("Проверить сообщение", use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 score = None
 pred = None
@@ -269,7 +304,7 @@ if check:
         score = round(prob * 100, 1)
 
         st.markdown("---")
-        st.subheader("Результат анализа")
+        st.subheader("Результат проверки")
 
         if pred == 1:
             st.error(f"⚠️ Подозрительное сообщение\n\nВероятность фишинга: **{score}%**")
@@ -287,7 +322,6 @@ if check:
     else:
         st.warning("Сначала вставь текст сообщения для проверки.")
 
-# Индикатор риска под результатом
 if score is not None:
     st.markdown(
         f"""
